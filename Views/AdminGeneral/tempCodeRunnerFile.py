@@ -1,0 +1,2 @@
+
+        _translate = QtCore.QCoreApplicat
