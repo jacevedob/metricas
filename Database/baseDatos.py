@@ -5,10 +5,10 @@ class DB():
     def conectar():
         try:
             credenciales = {
-                "dbname": "grupo01",
+                "dbname": "foodcourt",
                 "user": "postgres",
                 "password": "abcd1234",
-                "host": "poogrupo01.cqozrgcn8atr.us-east-1.rds.amazonaws.com",
+                "host": "localhost",
                 "port": 5432
             }
             conexion = psycopg2.connect(**credenciales) 
