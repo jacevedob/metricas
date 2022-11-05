@@ -1,7 +1,5 @@
 import psycopg2
-
 from Database.baseDatos import DB
-from PyQt5.QtWidgets import QMessageBox
 
 class Productos():
     
@@ -12,26 +10,14 @@ class Productos():
         conexion = DB.conectar()
         try:
             with conexion.cursor() as cursor:
-                cursor.execute("INSERT INTO producto (nombre,descripcion,precio,id_negocio) VALUES ('"+str(nombre)+"','"+str(descripcion)+"',"+str(precio)+","+str(id_negocio)+");")
+                cursor.execute("INSERT INTO producto (nombre,descripcion,precio,id_negocio) "
+                               "VALUES ('"+str(nombre)+"','"+str(descripcion)+"',"+str(precio)+","+str(id_negocio)+");")
             conexion.commit()
-            mensaje = QMessageBox()
-            mensaje.setWindowTitle("Información")
-            mensaje.setText("Producto creado exitosamente :)")
-            mensaje.setIcon(QMessageBox.Information)
-            mensaje.setStandardButtons(QMessageBox.Ok)
-            mensaje.setDefaultButton(QMessageBox.Ok)
-            mensaje.exec_()
         except psycopg2.Error as e:
             print(e)
         finally:
             if not conexion:
-                mensaje = QMessageBox()
-                mensaje.setWindowTitle("Error Critico")
-                mensaje.setText("No es pudo conectar a la base de datos")
-                mensaje.setIcon(QMessageBox.Critical)
-                mensaje.setStandardButtons(QMessageBox.Ok)
-                mensaje.setDefaultButton(QMessageBox.Ok)
-                mensaje.exec_()
+                print("Error Critico")
             else:
                 DB.desconectar(conexion)
     
@@ -39,7 +25,8 @@ class Productos():
         conexion = DB.conectar()
         try:
             with conexion.cursor() as cursor:
-                cursor.execute("SELECT id_producto,producto.nombre,descripcion,precio,negocio.nombre FROM producto INNER JOIN negocio ON producto.id_negocio = negocio.id_negocio ;")
+                cursor.execute("SELECT id_producto,producto.nombre,descripcion,precio,negocio.nombre FROM producto "
+                               "INNER JOIN negocio ON producto.id_negocio = negocio.id_negocio ;")
                 productos = cursor.fetchall()
                 if productos:
                     return productos
@@ -47,13 +34,7 @@ class Productos():
             print("Ocurrio un error al consultar: ",e)
         finally:
             if not conexion:
-                mensaje = QMessageBox()
-                mensaje.setWindowTitle("Error Critico")
-                mensaje.setText("No es pudo conectar a la base de datos")
-                mensaje.setIcon(QMessageBox.Critical)
-                mensaje.setStandardButtons(QMessageBox.Ok)
-                mensaje.setDefaultButton(QMessageBox.Ok)
-                mensaje.exec_()
+                print("Error Critico")
             else:
                 DB.desconectar(conexion)
                 
@@ -61,7 +42,8 @@ class Productos():
         conexion = DB.conectar()
         try:
             with conexion.cursor() as cursor:
-                cursor.execute("SELECT id_producto,producto.nombre,descripcion,precio,negocio.nombre FROM producto INNER JOIN negocio ON producto.id_negocio = negocio.id_negocio WHERE id_producto = "+str(id_producto)+";")
+                cursor.execute("SELECT id_producto, producto.nombre, descripcion, precio, negocio.nombre FROM producto "
+                               "INNER JOIN negocio ON producto.id_negocio = negocio.id_negocio WHERE id_producto = "+str(id_producto)+";")
                 producto = cursor.fetchone()
                 if producto:
                     return producto
@@ -69,13 +51,7 @@ class Productos():
             print(psycopg2.Error)
         finally:
             if not conexion:
-                mensaje = QMessageBox()
-                mensaje.setWindowTitle("Error Critico")
-                mensaje.setText("No es pudo conectar a la base de datos")
-                mensaje.setIcon(QMessageBox.Critical)
-                mensaje.setStandardButtons(QMessageBox.Ok)
-                mensaje.setDefaultButton(QMessageBox.Ok)
-                mensaje.exec_()
+                print("Error Critico")
             else:
                 DB.desconectar(conexion)
     
@@ -86,22 +62,10 @@ class Productos():
                 cursor.execute("DELETE FROM producto WHERE id_producto = "+str(id_producto)+";")
             conexion.commit()
         except psycopg2.Error as e:
-            mensaje = QMessageBox()
-            mensaje.setWindowTitle("Aviso")
-            mensaje.setText("Seleccione el id que acompaña al empleado")
-            mensaje.setIcon(QMessageBox.Warning)
-            mensaje.setStandardButtons(QMessageBox.Ok)
-            mensaje.setDefaultButton(QMessageBox.Ok)
-            mensaje.exec_()
+            print("Seleccione el id que acompaña al empleado")
         finally:
             if not conexion:
-                mensaje = QMessageBox()
-                mensaje.setWindowTitle("Error Critico")
-                mensaje.setText("No es pudo conectar a la base de datos")
-                mensaje.setIcon(QMessageBox.Critical)
-                mensaje.setStandardButtons(QMessageBox.Ok)
-                mensaje.setDefaultButton(QMessageBox.Ok)
-                mensaje.exec_()
+                print("Error Critico")
             else:
                 DB.desconectar(conexion)
                 
@@ -115,29 +79,14 @@ class Productos():
                                 ", precio = "+str(precio)+
                                 " WHERE id_producto ="+str(id_producto)+";")
             conexion.commit()
-            mensaje = QMessageBox()
-            mensaje.setWindowTitle("Información")
-            mensaje.setText("Producto actualizado exitosamente :)")
-            mensaje.setIcon(QMessageBox.Information)
-            mensaje.setStandardButtons(QMessageBox.Ok)
-            mensaje.setDefaultButton(QMessageBox.Ok)
-            mensaje.exec_()
+            print("Producto actualizado exitosamente :)")
         except psycopg2.Error as e:
-            mensaje = QMessageBox()
-            mensaje.setWindowTitle("Error")
-            mensaje.setText(e)
-            mensaje.setIcon(QMessageBox.Critical)
-            mensaje.setStandardButtons(QMessageBox.Ok)
-            mensaje.setDefaultButton(QMessageBox.Ok)
-            mensaje.exec_()
+            print("Error")
         finally:
             if not conexion:
-                mensaje = QMessageBox()
-                mensaje.setWindowTitle("Error Critico")
-                mensaje.setText("No es pudo conectar a la base de datos")
-                mensaje.setIcon(QMessageBox.Critical)
-                mensaje.setStandardButtons(QMessageBox.Ok)
-                mensaje.setDefaultButton(QMessageBox.Ok)
-                mensaje.exec_()
+                print("Error Critico")
             else:
                 DB.desconectar(conexion)
+
+productos = Productos()
+print(productos.readProductos())

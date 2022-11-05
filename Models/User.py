@@ -1,7 +1,5 @@
 import psycopg2
-
 from Database.baseDatos import DB
-from PyQt5.QtWidgets import QMessageBox
 
 class User():
     
@@ -20,48 +18,30 @@ class User():
             print("Usuario no encontrado, intente nuevamente: ", e)
         finally:
             if not conexion:
-                mensaje = QMessageBox()
-                mensaje.setWindowTitle("Error Critico")
-                mensaje.setText("No es pudo conectar a la base de datos")
-                mensaje.setIcon(QMessageBox.Critical)
-                mensaje.setStandardButtons(QMessageBox.Ok)
-                mensaje.setDefaultButton(QMessageBox.Ok)
-                mensaje.exec_()
+                print("Error de conexión")
             else:
                 DB.desconectar(conexion)
     
-    def createUser(self, nombre, contrasena, rol, id_negocio,cedula):
+    def createUser(self, usuario, nombre, contrasena, rol, id_negocio, cedula):
         conexion = DB.conectar()
         try:
             with conexion.cursor() as cursor:
-                cursor.execute("INSERT INTO usuarios (nombre,contraseña,rol,id_negocio,cedula) VALUES ('"+str(nombre)+"','"+str(contrasena)+"',"+str(rol)+","+str(id_negocio)+","+str(cedula)+");")
+                cursor.execute("INSERT INTO usuarios (usuario, nombre,contrasena,rol,id_negocio,cedula) VALUES "
+                               "('"+str(usuario)+"','"+str(nombre)+"','"+str(contrasena)+"',"+str(rol)+","+str(id_negocio)+","+str(cedula)+");")
             conexion.commit()
-            mensaje = QMessageBox()
-            mensaje.setWindowTitle("Información")
-            mensaje.setText("Usuario creado exitosamente :)")
-            mensaje.setIcon(QMessageBox.Information)
-            mensaje.setStandardButtons(QMessageBox.Ok)
-            mensaje.setDefaultButton(QMessageBox.Ok)
-            mensaje.exec_()
         except psycopg2.Error as e:
             print(e)
         finally:
             if not conexion:
-                mensaje = QMessageBox()
-                mensaje.setWindowTitle("Error Critico")
-                mensaje.setText("No es pudo conectar a la base de datos")
-                mensaje.setIcon(QMessageBox.Critical)
-                mensaje.setStandardButtons(QMessageBox.Ok)
-                mensaje.setDefaultButton(QMessageBox.Ok)
-                mensaje.exec_()
+                print("Error de conexión")
             else:
                 DB.desconectar(conexion)
             
-    def getUser(usuario, contrasena):
+    def getUser(self, usuario, contrasena):
         conexion = DB.conectar()
         try:
             with conexion.cursor() as cursor:
-                cursor.execute("SELECT nombre,cedula,rol,contraseña FROM usuarios WHERE (nombre='"+str(usuario)+"') AND (contraseña='"+str(contrasena)+"');")
+                cursor.execute("SELECT nombre, cedula, rol, contrasena FROM usuarios WHERE (usuario='"+str(usuario)+"') AND (contrasena='"+str(contrasena)+"');")
                 usuario = cursor.fetchone()
                 if usuario:
                     return usuario
@@ -69,13 +49,7 @@ class User():
             print("Usuario no encontrado, intente nuevamente: ", e)
         finally:
             if not conexion:
-                mensaje = QMessageBox()
-                mensaje.setWindowTitle("Error Critico")
-                mensaje.setText("No es pudo conectar a la base de datos")
-                mensaje.setIcon(QMessageBox.Critical)
-                mensaje.setStandardButtons(QMessageBox.Ok)
-                mensaje.setDefaultButton(QMessageBox.Ok)
-                mensaje.exec_()
+                print("Error de conexión")
             else:
                 DB.desconectar(conexion)
             
@@ -83,7 +57,8 @@ class User():
         conexion = DB.conectar()
         try:
             with conexion.cursor() as cursor:
-                cursor.execute("SELECT id_usu,usuarios.nombre,contraseña,roles.rol,negocio.nombre,cedula FROM usuarios INNER JOIN roles ON usuarios.rol = roles.id_rol INNER JOIN negocio ON usuarios.id_negocio = negocio.id_negocio ;")
+                cursor.execute("SELECT id_usuario, usuarios.nombre, contrasena, roles.rol, negocio.nombre, cedula FROM "
+                               "usuarios INNER JOIN roles ON usuarios.rol = roles.id_rol INNER JOIN negocio ON usuarios.id_negocio = negocio.id_negocio ;")
                 usuarios = cursor.fetchall()
                 if usuarios:
                     return usuarios
@@ -91,13 +66,7 @@ class User():
             print("Ocurrio un error al consultar: ",e)
         finally:
             if not conexion:
-                mensaje = QMessageBox()
-                mensaje.setWindowTitle("Error Critico")
-                mensaje.setText("No es pudo conectar a la base de datos")
-                mensaje.setIcon(QMessageBox.Critical)
-                mensaje.setStandardButtons(QMessageBox.Ok)
-                mensaje.setDefaultButton(QMessageBox.Ok)
-                mensaje.exec_()
+                print("Error de conexión")
             else:
                 DB.desconectar(conexion)
             
@@ -105,7 +74,9 @@ class User():
         conexion = DB.conectar()
         try:
             with conexion.cursor() as cursor:
-                cursor.execute("SELECT id_usu,usuarios.nombre,contraseña,roles.rol,negocio.nombre,cedula FROM usuarios INNER JOIN roles ON usuarios.rol = roles.id_rol INNER JOIN negocio ON usuarios.id_negocio = negocio.id_negocio WHERE id_usu = "+str(cod)+";")
+                cursor.execute("SELECT id_usuario, usuarios.nombre, contrasena, roles.rol, negocio.nombre, cedula FROM usuarios "
+                               "INNER JOIN roles ON usuarios.rol = roles.id_rol INNER JOIN negocio ON usuarios.id_negocio = negocio.id_negocio "
+                               "WHERE id_usuario = "+str(cod)+";")
                 usuario = cursor.fetchone()
                 if usuario:
                     return usuario
@@ -113,76 +84,39 @@ class User():
             print(psycopg2.Error)
         finally:
             if not conexion:
-                mensaje = QMessageBox()
-                mensaje.setWindowTitle("Error Critico")
-                mensaje.setText("No es pudo conectar a la base de datos")
-                mensaje.setIcon(QMessageBox.Critical)
-                mensaje.setStandardButtons(QMessageBox.Ok)
-                mensaje.setDefaultButton(QMessageBox.Ok)
-                mensaje.exec_()
+                print("Error de conexión")
             else:
                 DB.desconectar(conexion)
             
-    def updateUser(self, id_usu, nombre, contraseña, rol, id_negocio, cedula):
+    def updateUser(self, id_usuario, nombre, contrasena, rol, id_negocio, cedula):
         conexion = DB.conectar()
         try:
             with conexion.cursor() as cursor:
                 cursor.execute("UPDATE usuarios SET nombre = '"+str(nombre)+
-                                "', contraseña = '"+str(contraseña)+
+                                "', contrasena = '"+str(contrasena)+
                                 "', rol = "+str(rol)+
                                 ", id_negocio = "+str(id_negocio)+
                                 ", cedula = "+str(cedula)+
-                                " WHERE id_usu = "+str(id_usu)+";")
+                                " WHERE id_usuario = "+str(id_usuario)+";")
             conexion.commit()
-            mensaje = QMessageBox()
-            mensaje.setWindowTitle("Información")
-            mensaje.setText("Usuario actualizado exitosamente :)")
-            mensaje.setIcon(QMessageBox.Information)
-            mensaje.setStandardButtons(QMessageBox.Ok)
-            mensaje.setDefaultButton(QMessageBox.Ok)
-            mensaje.exec_()
         except psycopg2.Error as e:
-            mensaje = QMessageBox()
-            mensaje.setWindowTitle("Error")
-            mensaje.setText(e)
-            mensaje.setIcon(QMessageBox.Critical)
-            mensaje.setStandardButtons(QMessageBox.Ok)
-            mensaje.setDefaultButton(QMessageBox.Ok)
-            mensaje.exec_()
+            print("Error")
         finally:
             if not conexion:
-                mensaje = QMessageBox()
-                mensaje.setWindowTitle("Error Critico")
-                mensaje.setText("No es pudo conectar a la base de datos")
-                mensaje.setIcon(QMessageBox.Critical)
-                mensaje.setStandardButtons(QMessageBox.Ok)
-                mensaje.setDefaultButton(QMessageBox.Ok)
-                mensaje.exec_()
+                print("Error de conexión")
             else:
                 DB.desconectar(conexion)
             
-    def deleteUser(self, id_usu):
+    def deleteUser(self, id_usuario):
         conexion = DB.conectar()
         try:
             with conexion.cursor() as cursor:
-                cursor.execute("DELETE FROM usuarios WHERE id_usu = "+str(id_usu)+";")
+                cursor.execute("DELETE FROM usuarios WHERE id_usuario = "+str(id_usuario)+";")
             conexion.commit()
         except psycopg2.Error as e:
-            mensaje = QMessageBox()
-            mensaje.setWindowTitle("Aviso")
-            mensaje.setText("Seleccione el id que acompaña al empleado")
-            mensaje.setIcon(QMessageBox.Warning)
-            mensaje.setStandardButtons(QMessageBox.Ok)
-            mensaje.setDefaultButton(QMessageBox.Ok)
-            mensaje.exec_()
+            print("Error")
         finally:
             if not conexion:
-                mensaje = QMessageBox()
-                mensaje.setWindowTitle("Error Critico")
-                mensaje.setText("No es pudo conectar a la base de datos")
-                mensaje.setIcon(QMessageBox.Critical)
-                mensaje.setStandardButtons(QMessageBox.Ok)
-                mensaje.setDefaultButton(QMessageBox.Ok)
-                mensaje.exec_()
+                print("Error de conexión")
             else:
                 DB.desconectar(conexion)

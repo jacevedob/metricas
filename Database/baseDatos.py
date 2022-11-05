@@ -19,11 +19,13 @@ class DB():
             print("*************************************\n")
     
     #CONSULTA DE USUSARIO PARA VALIDAR INICIO DE SESION
-    def iniciarSesion(usuario, constrasena):
+    def iniciarSesion(usuario, contrasena):
         conexion = DB.conectar()
         try:
             with conexion.cursor() as cursor:
-                cursor.execute("SELECT nombre,cedula,rol,contraseña,id_negocio FROM usuarios WHERE (nombre='"+str(usuario)+"') AND (contraseña='"+str(constrasena)+"');")
+                query = "SELECT * FROM usuarios WHERE (usuario='"+str(usuario)+"') AND (contrasena='"+str(contrasena)+"');"
+                print(query)
+                cursor.execute(query)
                 usuario = cursor.fetchone()
                 if usuario:
                     return usuario
@@ -35,4 +37,3 @@ class DB():
     #DESCONEXION A LA BASE DE DATOS
     def desconectar(conexion):
         conexion.close()
-
