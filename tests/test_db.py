@@ -15,6 +15,8 @@ class PruebaUsuaurios(unittest.TestCase):
         user = User.createUser(self, 'User Test','Name test', 'Password Test', 1, 1, '123456789')
         if user:
             print("Usuario de prueba cerado exitosamente")
+        else:
+            print("Error al crear el usuario")
 
 
     def _dict_contact(self):
