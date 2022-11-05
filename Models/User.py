@@ -36,6 +36,7 @@ class User():
                 print("Error de conexión")
             else:
                 DB.desconectar(conexion)
+                return True
             
     def getUser(self, usuario, contrasena):
         conexion = DB.conectar()

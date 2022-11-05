@@ -12,7 +12,10 @@ from Models.User import User
 class PruebaUsuaurios(unittest.TestCase):
 
     def test_crear_usuario(self):
-         return User.createUser(self, 'User Test','Name test', 'Password Test', 1, 1, '123456789')
+        user = User.createUser(self, 'User Test','Name test', 'Password Test', 1, 1, '123456789')
+        if user:
+            print("Usuario de prueba cerado exitosamente")
+
 
     def _dict_contact(self):
         return {
